@@ -15,12 +15,15 @@ st.set_page_config(page_title="Biomed-Inspection System", page_icon="🏥", layo
 # Custom CSS for Enterprise Look
 st.markdown("""
     <style>
-    /* Hide Streamlit Branding (Viewer Mode) */
+    /* Hide Streamlit Branding & Profile Badge */
     #MainMenu {visibility: hidden;}
     footer {visibility: hidden;}
     header {visibility: hidden;}
     .stAppDeployButton {display:none;}
     img[data-testid="stLogo"] {visibility: hidden;}
+    [data-testid="stAppViewerBadge"] {display: none !important;}
+    ._profileContainer_gzau3_53 {display: none !important;}
+    ._badge_gzau3_29 {display: none !important;}
     
     .main {
         background-color: #f8f9fa;
