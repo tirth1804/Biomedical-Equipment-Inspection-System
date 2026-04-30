@@ -30,19 +30,6 @@ def init_db():
         )
     ''')
 
-    # Seed Default Data if table is empty
-    cursor.execute("SELECT COUNT(*) FROM equipment")
-    if cursor.fetchone()[0] == 0:
-        default_devices = [
-            ("ECG Machine", "MAC-2000", "Cardiology", "2024-01-01", "GE Healthcare", "230V", "Li-ion 14.4V", '["Power-On Self Test", "Lead-Off Detection", "Baseline Stability", "Common Mode Rejection", "Heart Rate Accuracy"]'),
-            ("Ventilator", "Puritan Bennett 980", "ICU", "2024-01-01", "Medtronic", "230V", "Backup Lead-Acid", '["Oxygen Supply Pressure", "Air Supply Pressure", "Exhalation Valve Test", "Safety Valve Test", "Battery Backup Test"]'),
-            ("Patient Monitor", "IntelliVue MX550", "ER", "2024-01-01", "Philips", "230V", "Rechargeable Li-ion", '["Display Pixel Test", "NIBP Pump Test", "SpO2 Module Sync", "Temperature Probe Continuity", "Alarm System Audio"]')
-        ]
-        cursor.executemany('''
-            INSERT INTO equipment (device_name, model_number, department, purchase_date, manufacturer, operating_voltage, battery_spec, checklist_fields)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-        ''', default_devices)
-        
     cursor.execute('''
         CREATE TABLE IF NOT EXISTS inspections (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -54,31 +41,31 @@ def init_db():
             serial_number TEXT,
             job_card_no TEXT,
             technician TEXT,
-            visual_inspection TEXT, -- JSON
-            operational_test TEXT, -- JSON
-            self_test TEXT, -- JSON
-            settings_check TEXT, -- JSON
             FOREIGN KEY (device_id) REFERENCES equipment (id)
         )
     ''')
 
-    # Seed initial data from Machine.md if empty
+    # Seed default devices if table is empty
     cursor.execute("SELECT COUNT(*) FROM equipment")
     if cursor.fetchone()[0] == 0:
-        sample_devices = [
-            ("Ventilator", "V-100", "ICU", "2023-01-01", "Philips", "230V", "12V, 7Ah", 
-             json.dumps(["Oxygen Supply Check", "Air Supply Check", "Leak Test", "Software & Firmware Check"])),
-            ("Ultrasound", "US-200", "Radiology", "2023-05-10", "GE", "230V", "N/A", 
-             json.dumps(["System Boot & UI Test", "Probe Holder Board", "Image Quality Test", "DC-DC Board", "Data Storage & Connectivity", "Audio Check and keyboard test"])),
-            ("Patient Monitor", "PM-50", "General Ward", "2024-02-15", "Mindray", "230V", "12V, 2.3Ah", 
-             json.dumps(["System Boot & UI Test", "Data Storage & Connectivity", "ECG Test", "SpO2 Test", "NIBP Test", "Temperature Test"])),
-            ("Defibrillator", "HeartStart XL", "Emergency", "2024-06-28", "Philips", "230V", "12V, 2.3Ah", 
-             json.dumps(["Power supply check", "Calibration status", "Physical condition", "Display working", "Alarm system"]))
+        default_devices = [
+            ("ECG Machine", "MAC-2000", "Cardiology", "2024-01-01", "GE Healthcare", "230V", "Li-ion 14.4V",
+             json.dumps(["Power-On Self Test", "Lead-Off Detection", "Baseline Stability", "Common Mode Rejection", "Heart Rate Accuracy"])),
+            ("Ventilator", "Puritan Bennett 980", "ICU", "2024-01-01", "Medtronic", "230V", "Backup Lead-Acid",
+             json.dumps(["Oxygen Supply Pressure", "Air Supply Pressure", "Exhalation Valve Test", "Safety Valve Test", "Battery Backup Test"])),
+            ("Patient Monitor", "IntelliVue MX550", "ER", "2024-01-01", "Philips", "230V", "Rechargeable Li-ion",
+             json.dumps(["Display Pixel Test", "NIBP Pump Test", "SpO2 Module Sync", "Temperature Probe Continuity", "Alarm System Audio"])),
+            ("Ultrasound", "US-200", "Radiology", "2023-05-10", "GE Healthcare", "230V", "N/A",
+             json.dumps(["System Boot & UI Test", "Probe Holder Board", "Image Quality Test", "DC-DC Board", "Data Storage & Connectivity", "Audio Check and Keyboard Test"])),
+            ("Anesthesia Machine", "Aisys CS2", "OT", "2023-08-01", "GE Healthcare", "230V", "12V, 7Ah",
+             json.dumps(["System Boot & UI Test", "Oxygen Supply Check", "Air Supply Check", "Nitrous Oxide Check", "Leak Test", "Flowmeter Accuracy Test", "Vaporizer Testing", "Breathing Circuit Check"])),
+            ("Defibrillator", "HeartStart XL", "Emergency", "2024-06-28", "Philips", "230V", "12V, 2.3Ah",
+             json.dumps(["Power Supply Check", "Calibration Status", "Physical Condition", "Display Working", "Alarm System"]))
         ]
         cursor.executemany('''
             INSERT INTO equipment (device_name, model_number, department, purchase_date, manufacturer, operating_voltage, battery_spec, checklist_fields)
             VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-        ''', sample_devices)
+        ''', default_devices)
     
     conn.commit()
     conn.close()

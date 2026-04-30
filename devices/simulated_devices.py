@@ -27,7 +27,7 @@ class SimulatedDevice(MedicalDeviceInterface):
             
         return results
 
-class ECGSilumator(SimulatedDevice):
+class ECGSimulator(SimulatedDevice):
     def __init__(self):
         procedures = [
             "Power-On Self Test",
@@ -65,7 +65,7 @@ class PatientMonitorSimulator(SimulatedDevice):
 
 def get_simulator_for_type(device_type):
     simulators = {
-        "ECG": ECGSilumator(),
+        "ECG": ECGSimulator(),
         "Ventilator": VentilatorSimulator(),
         "Patient Monitor": PatientMonitorSimulator()
     }
