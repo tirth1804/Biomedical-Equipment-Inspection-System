@@ -8,9 +8,10 @@ def inspection_history():
     st.title("📜 Inspection History")
     
     conn = get_connection()
-    # Join with equipment to get device name
     query = '''
-        SELECT i.id, i.date, e.device_name, e.model_number, i.inspected_by, i.remarks, i.checklist_data, e.department, i.device_id
+        SELECT i.id, i.date, e.device_name, e.model_number, i.inspected_by, i.remarks,
+               i.checklist_data, e.department, i.device_id, i.serial_number, i.job_card_no,
+               i.technician, e.manufacturer, e.purchase_date, e.operating_voltage, e.battery_spec
         FROM inspections i
         JOIN equipment e ON i.device_id = e.id
         ORDER BY i.date DESC
@@ -52,13 +53,13 @@ def inspection_history():
         # Health Score
         pass_count = sum(1 for v in checklist.values() if v == "Pass")
         total = len(checklist)
-        score = (pass_count / total) * 100
+        score = (pass_count / total * 100) if total > 0 else 0
         st.info(f"Health Score: {score:.1f}%")
-        
+
         st.table(pd.DataFrame(checklist.items(), columns=["Item", "Status"]))
-        
-        # PDF Generation
-        if st.button("Generate PDF Report"):
+
+        # PDF Generation — generate inline so download is always available
+        try:
             pdf_data = generate_pdf(record, checklist)
             st.download_button(
                 label="Download PDF Report",
@@ -66,3 +67,5 @@ def inspection_history():
                 file_name=f"Report_{record['device_name']}_{record['date']}.pdf",
                 mime="application/pdf"
             )
+        except Exception as e:
+            st.error(f"Could not generate PDF: {e}")
