@@ -7,12 +7,11 @@ from modules.manual_inspection import inspection_module as manual_inspection
 from modules.automated_inspection import automated_inspection
 from modules.history import inspection_history
 
-# Initialize DB on start
-init_db()
-
+# set_page_config must be first Streamlit call
 st.set_page_config(page_title="Biomed-Inspection System", page_icon="🏥", layout="wide")
 
-# Custom CSS for Enterprise Look
+# Inject CSS immediately after set_page_config — before any other work —
+# so the badge is hidden before the browser renders it
 st.markdown("""
     <style>
     /* Hide Streamlit Branding & Profile Badge */
@@ -24,12 +23,15 @@ st.markdown("""
     [data-testid="stAppViewerBadge"] {display: none !important;}
     ._profileContainer_gzau3_53 {display: none !important;}
     ._badge_gzau3_29 {display: none !important;}
-    
+
     .main {
         background-color: #f8f9fa;
     }
     </style>
     """, unsafe_allow_html=True)
+
+# Initialize DB after CSS is sent to client
+init_db()
 
 # Session state for auth
 if 'logged_in' not in st.session_state:
