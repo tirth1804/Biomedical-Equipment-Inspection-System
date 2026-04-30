@@ -1,6 +1,4 @@
 from abc import ABC, abstractmethod
-import time
-import random
 
 class MedicalDeviceInterface(ABC):
     """

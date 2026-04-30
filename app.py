@@ -1,6 +1,7 @@
 import streamlit as st
 from database import init_db
 from modules.auth import login_page, logout
+from modules.dashboard import dashboard
 from modules.equipment import equipment_management
 from modules.manual_inspection import inspection_module as manual_inspection
 from modules.automated_inspection import automated_inspection
@@ -38,16 +39,18 @@ else:
     st.sidebar.title("🏥 Biomed-Inspect")
     st.sidebar.write("Navigate through modules")
     
-    page = st.sidebar.radio("Go to", 
-        ["Equipment Management", "Manual Inspection", "Automated Testing", "Inspection History"]
+    page = st.sidebar.radio("Go to",
+        ["Dashboard", "Equipment Management", "Manual Inspection", "Automated Testing", "Inspection History"]
     )
-    
+
     st.sidebar.divider()
     if st.sidebar.button("Logout"):
         logout()
 
     # Page Routing
-    if page == "Equipment Management":
+    if page == "Dashboard":
+        dashboard()
+    elif page == "Equipment Management":
         equipment_management()
     elif page == "Manual Inspection":
         manual_inspection()

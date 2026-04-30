@@ -16,6 +16,7 @@ HTML_TEMPLATE = """
         th { background-color: #f9f9f9; width: 60%; }
         .status-pass { color: green; font-weight: bold; }
         .status-fail { color: red; font-weight: bold; }
+        .status-not-tested { color: #888; font-style: italic; }
         .footer { margin-top: 50px; font-size: 0.85em; color: #888; border-top: 1px solid #eee; padding-top: 10px; text-align: center; }
     </style>
 </head>
@@ -65,11 +66,17 @@ HTML_TEMPLATE = """
             {% for item, status in checklist.items() %}
             <tr>
                 <td>{{ item }}</td>
-                <td class="status-{{ status|lower }}">{{ status }}</td>
+                <td class="status-{{ status|lower|replace(' ', '-') }}">{{ status }}</td>
             </tr>
             {% endfor %}
         </tbody>
     </table>
+
+    <div class="section-title">Health Assessment</div>
+    <div class="grid">
+        <div><span class="label">Tests Passed:</span> {{ pass_count }} / {{ total_tests }}</div>
+        <div><span class="label">Device Health Score:</span> {{ health_score }}%</div>
+    </div>
 
     <div class="section-title">Remarks & Observations</div>
     <p style="padding: 10px; background-color: #fbfbfb; border: 1px solid #f0f0f0;">{{ record.remarks }}</p>
@@ -82,7 +89,17 @@ HTML_TEMPLATE = """
 """
 
 def generate_pdf(record, checklist):
+    total_tests = len(checklist)
+    pass_count = sum(1 for v in checklist.values() if v == "Pass")
+    health_score = f"{(pass_count / total_tests * 100):.1f}" if total_tests > 0 else "N/A"
+
     template = Template(HTML_TEMPLATE)
-    html_out = template.render(record=record, checklist=checklist)
+    html_out = template.render(
+        record=record,
+        checklist=checklist,
+        pass_count=pass_count,
+        total_tests=total_tests,
+        health_score=health_score,
+    )
     pdf = HTML(string=html_out).write_pdf()
     return pdf

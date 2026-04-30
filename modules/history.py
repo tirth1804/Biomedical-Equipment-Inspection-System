@@ -27,8 +27,16 @@ def inspection_history():
     device_filter = st.multiselect("Filter by Device", options=df['device_name'].unique())
     if device_filter:
         df = df[df['device_name'].isin(device_filter)]
-    
-    st.dataframe(df[['id', 'date', 'device_name', 'inspected_by', 'remarks']], use_container_width=True)
+
+    if df.empty:
+        st.info("No inspections match the selected filter.")
+        return
+
+    st.dataframe(
+        df[['id', 'date', 'device_name', 'inspected_by', 'remarks']],
+        use_container_width=True,
+        hide_index=True,
+    )
     
     st.divider()
     st.subheader("View & Export Details")
