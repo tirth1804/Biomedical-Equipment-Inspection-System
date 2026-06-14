@@ -48,8 +48,18 @@ coverage.xml
 *.cover
 *.py.cover
 .hypothesis/
-.pytest_cache/
-cover/
+.nox/
+.tox/
+
+# Professional Databases
+*.db
+*.sqlite3
+*.db-journal
+*.sqlite
+
+# Keep data folder but ignore its contents locally
+# This tells Git to TRACK the folder but ignore files inside for some cloud providers
+!data/
 
 # Translations
 *.mo
@@ -138,6 +148,7 @@ celerybeat.pid
 .env
 .envrc
 .venv
+.vemv
 env/
 venv/
 ENV/
